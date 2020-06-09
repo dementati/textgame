@@ -4,9 +4,10 @@ from state import State
 state = State.load_state("config.json")
 cmds = command.create_commands(state)
 
+
 print(state.current_room.description)
 while True:
-    cmd_input = input("> ")
+    cmd_input: str = input("> ")
 
     cmd_found = False
     for cmd in cmds:
