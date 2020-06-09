@@ -1,7 +1,7 @@
 import sys
 
-from command import Command
-from state import State
+from textgame.command import Command
+from textgame.state import State
 
 
 class QuitCommand(Command):

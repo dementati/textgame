@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import List
 
-from state import State
+from textgame.state import State
 
 
 class CommandException(Exception):
@@ -21,7 +21,8 @@ class Command:
         pass
 
 
-# noinspection PyPep8
+# noinspection PyUnresolvedReferences
+from textgame.commands import *
 
 
 def create_commands(state: State) -> List[Command]:

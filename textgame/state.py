@@ -1,7 +1,7 @@
 import json
 from typing import Dict
 
-from room import Room
+from textgame.room import Room
 
 
 class State:

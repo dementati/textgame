@@ -1,7 +1,7 @@
 from typing import Optional
 
-from command import Command, CommandException
-from state import State
+from textgame.command import Command, CommandException
+from textgame.state import State
 
 
 class MoveCommand(Command):
