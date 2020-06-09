@@ -1,0 +1,21 @@
+{
+  "white_space": {
+    "description": "You see nothing but a uniform white surrounding you on all sides.",
+    "exits": {
+      "north": "blue_space",
+      "south": "red_space"
+    }
+  },
+  "blue_space": {
+    "description": "You see nothing but a uniform blue surrounding you on all sides.",
+    "exits": {
+      "south": "white_space"
+    }
+  },
+  "red_space": {
+    "description": "You see nothing but a uniform red surrounding you on all sides.",
+    "exits": {
+      "north": "white_space"
+    }
+  }
+}
