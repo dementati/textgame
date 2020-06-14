@@ -35,6 +35,10 @@ class Command:
         self.cmd_line: Optional[CommandLine] = None
 
     @abstractmethod
+    def validate(self, cmd_line: CommandLine) -> None:
+        pass
+
+    @abstractmethod
     def execute(self, cmd_line: CommandLine) -> None:
         pass
 
@@ -54,6 +58,7 @@ class CommandInstance:
     cmd_line: CommandLine
 
     def execute(self) -> None:
+        self.cmd.validate(self.cmd_line)
         self.cmd.execute(self.cmd_line)
 
 

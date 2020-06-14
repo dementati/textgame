@@ -1,4 +1,5 @@
 {
   "initial_room": "red_space",
-  "room_file": "rooms.json"
+  "room_file": "rooms.json",
+  "log_level": "WARN"
 }
