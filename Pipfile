@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 mypy = "*"
 pytest = "*"
+fuzzywuzzy = "*"
 
 [requires]
 python_version = "3.8"
