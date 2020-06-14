@@ -11,5 +11,5 @@ class ExitsCommand(Command):
             raise CommandException("Usage: exits")
 
     def execute(self, _cmd_line: CommandLine) -> None:
-        print("Exits:")
-        print(", ".join(self.state.current_room.exits.keys()))
+        self.state.output("Exits:")
+        self.state.output(", ".join(self.state.current_room.exits.keys()))

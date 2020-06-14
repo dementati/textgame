@@ -21,7 +21,7 @@ class MoveCommand(Command):
 
         room_id = self.state.current_room.exits[target]
         self.state.current_room = self.state.rooms[room_id]
-        print(self.state.current_room.description)
+        self.state.output(self.state.current_room.description)
 
     @property
     def matchers(self) -> Iterable[str]:

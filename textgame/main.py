@@ -1,27 +1,18 @@
 import json
 
-from textgame import command
-from textgame.command import CommandException
+from textgame.executor import Executor
 from textgame.state import State
 
 
 def main() -> None:
     config = load_config()
     configure_logging(config)
-    state = State.load_state(config)
-    cmds = command.create_commands(state)
+    state = State.load_state(config, print_output)
+    executor = Executor(state)
 
-    print(state.current_room.description)
     while True:
         cmd_input: str = input("> ")
-        cmd = cmds.select(cmd_input)
-        if cmd:
-            try:
-                cmd.execute()
-            except CommandException as e:
-                print(e)
-        else:
-            print("Unrecognized command")
+        executor.execute(cmd_input)
 
 
 def load_config(config_file: str = "config.json") -> dict:
@@ -46,6 +37,10 @@ def configure_logging(config: dict) -> None:
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     root.addHandler(handler)
+
+
+def print_output(output_str: str) -> None:
+    print(output_str)
 
 
 if __name__ == "__main__":

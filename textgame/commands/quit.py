@@ -13,5 +13,5 @@ class QuitCommand(Command):
             raise CommandException("Usage: quit")
 
     def execute(self, _cmd_line: CommandLine) -> None:
-        print("Quitting...")
+        self.state.output("Quitting...")
         sys.exit(0)

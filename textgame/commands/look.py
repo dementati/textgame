@@ -11,4 +11,4 @@ class LookCommand(Command):
             raise CommandException("Usage: look")
 
     def execute(self, _cmd_line: CommandLine) -> None:
-        print(self.state.current_room.description)
+        self.state.output(self.state.current_room.description)
