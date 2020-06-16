@@ -9,6 +9,7 @@ verify_ssl = true
 mypy = "*"
 pytest = "*"
 fuzzywuzzy = "*"
+pika = "*"
 
 [requires]
 python_version = "3.8"
