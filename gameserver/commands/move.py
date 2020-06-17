@@ -1,8 +1,8 @@
 from typing import Iterable, Optional
 
-from textgame import match
-from textgame.command import Command, CommandException, CommandLine
-from textgame.state import State
+from gameserver import match
+from gameserver.command import Command, CommandException, CommandLine
+from gameserver.state import State
 
 
 class MoveCommand(Command):

@@ -4,8 +4,8 @@ from copy import copy
 from dataclasses import dataclass
 from typing import Iterable, Optional, Dict
 
-from textgame import match
-from textgame.state import State
+from gameserver import match
+from gameserver.state import State
 
 
 class CommandException(Exception):
@@ -86,7 +86,7 @@ class CommandSet:
 
 
 # noinspection PyUnresolvedReferences
-from textgame.commands import *
+from gameserver.commands import *
 
 
 def create_commands(state: State) -> CommandSet:

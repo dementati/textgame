@@ -1,7 +1,7 @@
 from typing import Dict, Callable
 
-from textgame import command
-from textgame.room import Room
+from gameserver import command
+from gameserver.room import Room
 
 OutputCallback = Callable[[str], None]
 

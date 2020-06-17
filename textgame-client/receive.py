@@ -16,7 +16,7 @@ def main():
     channel.start_consuming()
 
 
-def callback(ch, method, properties, body):
+def callback(_ch, _method, _properties, body):
     print(f" [x] Received {body.decode()}")
 
 

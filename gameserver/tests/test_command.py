@@ -1,7 +1,7 @@
 # noinspection Mypy
 from pytest import raises
 
-from textgame.command import CommandLine, CommandLineException
+from gameserver.command import CommandLine, CommandLineException
 
 
 def test_command_line_no_args() -> None:

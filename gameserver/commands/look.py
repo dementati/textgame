@@ -1,5 +1,5 @@
-from textgame.command import Command, CommandLine, CommandException
-from textgame.state import State
+from gameserver.command import Command, CommandLine, CommandException
+from gameserver.state import State
 
 
 class LookCommand(Command):

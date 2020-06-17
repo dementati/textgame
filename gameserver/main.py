@@ -1,7 +1,7 @@
 import json
 
-from textgame.executor import Executor
-from textgame.state import State
+from gameserver.executor import Executor
+from gameserver.state import State
 
 
 def main() -> None:

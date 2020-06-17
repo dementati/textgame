@@ -1,5 +1,5 @@
-from textgame.command import CommandException
-from textgame.state import State
+from gameserver.command import CommandException
+from gameserver.state import State
 
 
 class Executor:
