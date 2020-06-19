@@ -60,7 +60,20 @@ def test_create_hashed_id_persisted(client: FlaskClient) -> None:
 
     # THEN
     user = get_user_by_email(email)
-    assert bcrypt.checkpw(str(user.id).encode("utf-8"), user.hashed_id)
+    assert bcrypt.checkpw(str(user.id).encode("utf-8"), user.hashed_id.encode("utf-8"))
+
+
+def test_create_rsp_contains_topic(client: FlaskClient) -> None:
+    # GIVEN
+    email = VALID_EMAIL
+
+    # WHEN
+    rsp = create_user_successfully(client)
+
+    # THEN
+    user = get_user_by_email(email)
+    expected_topic = f"user.{user.hashed_id}.message"
+    assert expected_topic == rsp.json["topic"]
 
 
 def test_create_empty_email(client: FlaskClient) -> None:

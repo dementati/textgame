@@ -44,7 +44,7 @@ def create() -> Tuple[str, int]:
 
     # Return response
     rsp = {
-        "topic": f"client.{user.id}.message"
+        "topic": f"user.{user.hashed_id}.message"
     }
 
     return jsonify(rsp)
@@ -69,5 +69,7 @@ def hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
 
-def hash_id(db_id: int) -> bytes:
-    return bcrypt.hashpw(str(db_id).encode("utf-8"), bcrypt.gensalt())
+def hash_id(db_id: int) -> str:
+    bytes_id = str(db_id).encode("utf-8")
+    hashed_id = bcrypt.hashpw(bytes_id, bcrypt.gensalt())
+    return hashed_id.decode("utf-8")
