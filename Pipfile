@@ -14,6 +14,9 @@ flask = "*"
 psycopg2 = "*"
 sqlalchemy = "*"
 flask-sqlalchemy = "*"
+email-validator = "*"
+password-validator = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.8"
