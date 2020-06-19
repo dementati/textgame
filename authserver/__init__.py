@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 
 
 @app.errorhandler(ValidationException)
-def handle_invalid_request(error):
+def handle_invalid_request(error: ValidationException) -> None:
     response = jsonify(error.as_dict())
     response.status_code = error.status_code
     return response

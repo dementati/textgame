@@ -2,6 +2,7 @@ from typing import Generator
 
 # noinspection Mypy
 import bcrypt
+# noinspection Mypy
 import pytest
 from flask import Response
 from flask.testing import FlaskClient
@@ -48,6 +49,18 @@ def test_create_hashed_password_persisted(client: FlaskClient) -> None:
     # THEN
     user = get_user_by_email(email)
     assert bcrypt.checkpw(password.encode("utf-8"), user.password)
+
+
+def test_create_hashed_id_persisted(client: FlaskClient) -> None:
+    # GIVEN
+    email = VALID_EMAIL
+
+    # WHEN
+    create_user_successfully(client)
+
+    # THEN
+    user = get_user_by_email(email)
+    assert bcrypt.checkpw(str(user.id).encode("utf-8"), user.hashed_id)
 
 
 def test_create_empty_email(client: FlaskClient) -> None:

@@ -8,12 +8,10 @@ from password_validator import PasswordValidator
 from authserver import app, db
 from common.error import ValidationException
 
-
 password_schema = PasswordValidator()
 
 (
-    password_schema
-        .min(12)
+    password_schema.min(12)
         .max(100)
         .has().uppercase()
         .has().lowercase()
@@ -39,6 +37,11 @@ def create() -> Tuple[str, int]:
     db.session.add(user)
     db.session.commit()
 
+    # Hash ID and write to database
+    user.hashed_id = hash_id(user.id)
+    db.session.add(user)
+    db.session.commit()
+
     # Return response
     rsp = {
         "topic": f"client.{user.id}.message"
@@ -47,7 +50,7 @@ def create() -> Tuple[str, int]:
     return jsonify(rsp)
 
 
-def validate_create(body) -> None:
+def validate_create(body: dict) -> None:
     try:
         validate_email(body["email"])
     except EmailNotValidError:
@@ -58,9 +61,13 @@ def validate_create(body) -> None:
                                   "Must include uppercase, lowercase, numbers and symbols")
 
 
-def normalize_email(email):
+def normalize_email(email: str) -> str:
     return validate_email(email).email
 
 
-def hash_password(password):
+def hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
+
+def hash_id(db_id: int) -> bytes:
+    return bcrypt.hashpw(str(db_id).encode("utf-8"), bcrypt.gensalt())
