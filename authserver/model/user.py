@@ -1,4 +1,4 @@
-from authserver.user_api import db
+from authserver import db
 
 
 class User(db.Model):

@@ -1,68 +1,72 @@
 from typing import Tuple
 
 import bcrypt
-from email_validator import validate_email, EmailNotValidError
+import email_validator
 from flask import request, jsonify
 from password_validator import PasswordValidator
 
 from authserver import app, db
+from authserver.model.user import User
 from common.error import ValidationException
 
 password_schema = PasswordValidator()
 
 (
     password_schema.min(12)
-        .max(100)
-        .has().uppercase()
-        .has().lowercase()
-        .has().digits()
-        .has().symbols()
+                   .max(100)
+                   .has().uppercase()
+                   .has().lowercase()
+                   .has().digits()
+                   .has().symbols()
 )
 
 
 @app.route('/api/user', methods=["POST"])
 def create() -> Tuple[str, int]:
     body = request.json
-
-    # Validate
     validate_create(body)
+    user = create_db_user(body["email"], body["password"])
+    return jsonify(dict(topic=f"user.{user.hashed_id}.message"))
 
-    # Write to database
-    from authserver.model.user import User
+
+def create_db_user(email: str, password: str) -> User:
     user = User(
-        email=normalize_email(body["email"]),
-        password=hash_password(body["password"]),
+        email=normalize_email(email),
+        password=hash_password(password),
     )
 
     db.session.add(user)
     db.session.commit()
 
-    # Hash ID and write to database
     user.hashed_id = hash_id(user.id)
     db.session.add(user)
     db.session.commit()
 
-    # Return response
-    rsp = {
-        "topic": f"user.{user.hashed_id}.message"
-    }
-
-    return jsonify(rsp)
+    return user
 
 
 def validate_create(body: dict) -> None:
+    # Validate email
     try:
-        validate_email(body["email"])
-    except EmailNotValidError:
-        raise ValidationException("Invalid email")
+        email = normalize_email(body["email"])
+    except email_validator.EmailNotValidError:
+        raise ValidationException("Invalid e-mail")
 
+    if email_exists(email):
+        raise ValidationException("E-mail already exists")
+
+    # Validate password
     if not password_schema.validate(body["password"]):
         raise ValidationException("Invalid password. Must be at least 12 characters. "
                                   "Must include uppercase, lowercase, numbers and symbols")
 
 
+def email_exists(email: str) -> bool:
+    return bool(User.query.filter_by(email=email).first())
+
+
 def normalize_email(email: str) -> str:
-    return validate_email(email).email
+    return email_validator.validate_email(email).email
 
 
 def hash_password(password: str) -> bytes:

@@ -8,7 +8,7 @@ from flask import Response
 from flask.testing import FlaskClient
 
 from authserver.model.user import User
-from authserver.user_api import app, db
+from authserver.api.user import app, db
 
 VALID_EMAIL = "test@example.com"
 VALID_PASSWORD = "H3ll0 w0rld!"
@@ -61,6 +61,15 @@ def test_create_hashed_id_persisted(client: FlaskClient) -> None:
     # THEN
     user = get_user_by_email(email)
     assert bcrypt.checkpw(str(user.id).encode("utf-8"), user.hashed_id.encode("utf-8"))
+
+
+def test_create_existing_email(client: FlaskClient) -> None:
+    # GIVEN
+    email = VALID_EMAIL
+    create_user_successfully(client, email=email)
+
+    # WHEN/THEN
+    create_user_unsuccessfully(client, email=email)
 
 
 def test_create_rsp_contains_topic(client: FlaskClient) -> None:
