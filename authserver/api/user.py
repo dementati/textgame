@@ -1,3 +1,4 @@
+import re
 from typing import Tuple
 
 import bcrypt
@@ -7,6 +8,7 @@ from password_validator import PasswordValidator
 
 from authserver import app, db
 from authserver.model.user import User
+from authserver.rabbitmq import RabbitMQ
 from common.error import ValidationException
 
 password_schema = PasswordValidator()
@@ -26,6 +28,7 @@ def create() -> Tuple[str, int]:
     body = request.json
     validate_create(body)
     user = create_db_user(body["email"], body["password"])
+    create_rmq_user(body["email"], body["password"], user.hashed_id)
     return jsonify(dict(topic=f"user.{user.hashed_id}.message"))
 
 
@@ -43,6 +46,16 @@ def create_db_user(email: str, password: str) -> User:
     db.session.commit()
 
     return user
+
+
+def create_rmq_user(email: str, password: str, hashed_id: str) -> None:
+    rmq = RabbitMQ()
+    rmq.put_user(email, password)
+    rmq.put_topic_permissions(
+        email,
+        write=r"^.*%s.*$" % re.escape(hashed_id),
+        read=r"^.*%s.*$" % re.escape(hashed_id),
+    )
 
 
 def validate_create(body: dict) -> None:

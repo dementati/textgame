@@ -1,3 +1,5 @@
+import re
+import uuid
 from typing import Generator
 
 # noinspection Mypy
@@ -7,8 +9,9 @@ import pytest
 from flask import Response
 from flask.testing import FlaskClient
 
-from authserver.model.user import User
 from authserver.api.user import app, db
+from authserver.model.user import User
+from authserver.rabbitmq import RabbitMQ
 
 VALID_EMAIL = "test@example.com"
 VALID_PASSWORD = "H3ll0 w0rld!"
@@ -21,6 +24,8 @@ def client() -> Generator[FlaskClient, None, None]:
 
     db.drop_all()
     db.create_all()
+
+    delete_rmq_test_users()
 
     with app.test_client() as client:
         yield client
@@ -83,6 +88,39 @@ def test_create_rsp_contains_topic(client: FlaskClient) -> None:
     user = get_user_by_email(email)
     expected_topic = f"user.{user.hashed_id}.message"
     assert expected_topic == rsp.json["topic"]
+
+
+def test_create_rmq_user_created(client: FlaskClient) -> None:
+    # GIVEN
+    email = random_valid_email()
+
+    # WHEN
+    create_user_successfully(client, email=email)
+
+    # THEN
+    rmq = RabbitMQ()
+    assert any(user["name"] == email for user in rmq.users)
+
+
+def test_create_rmq_topic_permission_set(client: FlaskClient) -> None:
+    # GIVEN
+    email = random_valid_email()
+
+    # WHEN
+    create_user_successfully(client, email=email)
+
+    # THEN
+    user = get_user_by_email(email)
+
+    expected_write = r"^.*%s.*$" % re.escape(user.hashed_id)
+    expected_read = r"^.*%s.*$" % re.escape(user.hashed_id)
+    print(expected_write)
+    permissions = RabbitMQ().get_topic_permissions(email)
+    assert len(permissions) == 1
+    permission = permissions[0]
+    assert permission["user"] == email
+    assert permission["write"] == expected_write
+    assert permission["read"] == expected_read
 
 
 def test_create_empty_email(client: FlaskClient) -> None:
@@ -196,3 +234,13 @@ def get_user_by_email(email: str) -> User:
     user = User.query.filter_by(email=email).first()
     assert user is not None
     return user
+
+
+def random_valid_email() -> str:
+    return f"{uuid.uuid4()}@example.com"
+
+
+def delete_rmq_test_users() -> None:
+    rmq = RabbitMQ()
+    test_users = [user["name"] for user in rmq.users if user["name"].endswith("@example.com")]
+    rmq.delete_users(test_users)
