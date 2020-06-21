@@ -31,7 +31,7 @@ def create_user_successfully(
     rsp = client.post("/api/user", json=data)
 
     # THEN
-    assert rsp.status_code == 200
+    assert rsp.status_code == 200, str(rsp)
     assert rsp.content_type == "application/json"
     assert "topic" in rsp.json
 
@@ -55,6 +55,29 @@ def create_user_unsuccessfully(
     # THEN
     assert rsp.status_code == 400
     assert rsp.content_type == "application/json"
+
+    return rsp
+
+
+def create_session_successfully(
+        client: FlaskClient,
+        email: str = VALID_EMAIL,
+        password: str = VALID_PASSWORD
+) -> Response:
+    # GIVEN
+    data = {
+        "email": email,
+        "password": password,
+    }
+
+    # WHEN
+    rsp = client.post("/api/session", json=data)
+
+    # THEN
+    assert rsp.status_code == 200, str(rsp)
+    assert rsp.content_type == "application/json"
+    assert "token" in rsp.json
+    assert rsp.json["token"]
 
     return rsp
 

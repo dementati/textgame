@@ -4,7 +4,7 @@ from typing import Generator
 import pytest
 from flask.testing import FlaskClient
 
-from authserver.api.user import app, db
+from authserver import app, db
 from authserver.tests import delete_rmq_test_users
 
 
